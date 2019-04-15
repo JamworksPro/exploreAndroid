@@ -30,23 +30,32 @@ public class MainActivity extends AppCompatActivity
 
   private void doUpdateLocation(Location location)
   {
-    m_PreviousLocation = m_CurrentLocation;
     m_CurrentLocation = location;
 
     double s = m_CurrentLocation.getSpeed();
     double b = m_CurrentLocation.getBearing();
-    double d = m_CurrentLocation.distanceTo(m_PreviousLocation);
-    double t = m_CurrentLocation.getElapsedRealtimeNanos() - m_PreviousLocation.getElapsedRealtimeNanos();
+    
+    try
+    {
+      double d = m_CurrentLocation.distanceTo(m_PreviousLocation);
+      double t = m_CurrentLocation.getElapsedRealtimeNanos() - m_PreviousLocation.getElapsedRealtimeNanos();
+      m_txtDistance.setText(Float.toString((float) d*3.28084f));
+      m_txtTime.setText(Float.toString((float) (t/1000000000f)));
+    }
+    catch(Exception e)
+    {}
+
     double o = m_CurrentLocation.getLongitude();
     double a = m_CurrentLocation.getLatitude();
     double l = m_CurrentLocation.getAltitude();
     long m = m_CurrentLocation.getTime();
 
+    m_PreviousLocation = m_CurrentLocation;
+
     //Includes conversions for Km/hr to MPH and meters to feet
     m_txtSpeed.setText(String.format("%.1f mph", s*2.23694f));
     m_txtBearing.setText(Float.toString((float) b));
-    m_txtDistance.setText(Float.toString((float) d*3.28084f));
-    m_txtTime.setText(Float.toString((float) (t/1000000000f)));
+
     m_txtLongitude.setText(Float.toString((float) o));
     m_txtLatitude.setText(Float.toString((float) a));
     m_txtAltitude.setText(Float.toString((float) l*3.28084f));
@@ -80,7 +89,6 @@ public class MainActivity extends AppCompatActivity
 
         for (Location location : locationResult.getLocations())
         {
-          m_CurrentLocation = location;
           doUpdateLocation(location);
         }
       };
